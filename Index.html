@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Traductor</title>
+    <script type="text/javascript">
+        var conexion;
+        window.addEventListener("load", cargar, false);
+        function cargar() {
+            document.getElementById("entrada").addEventListener("keypress", validarCaracter, false);
+            document.getElementById("btn_traducir").addEventListener("click", enviarValoresServidor, false);
+        }
+        //Validamos que el caracter sea una ltera minuscula
+        function validarCaracter(event) {
+            if (event.keyCode >= 97 && event.keyCode <= 122) {
+                event.returnValue = true;
+            } else {
+                event.returnValue = false;
+            }
+        }
+
+        function enviarValoresServidor() {
+            var palabra = document.getElementById("entrada").value;
+            //validamos que exista algo que tradcuir
+            if (palabra.length > 0) {
+                conexion = new XMLHttpRequest();
+                conexion.onreadystatechange = esperaResultado;
+                conexion.open("POST", "traduccion.php", true);
+                conexion.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                conexion.send("palabra_php=" + palabra);
+            } else {
+                alert("Ingrese una palabra a traducir!!!");
+            }
+        }
+
+        function esperaResultado() {
+            if (conexion.readyState === 4) {
+                var resultado = conexion.responseText;
+                document.getElementById("salida").value = resultado;
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <form>
+        <label>
+            <h1>Traductor</h1>
+        </label>
+        <label>(solo permite letras minusculas)</label><br><br><br>
+        Entrada: <input type="text" id="entrada" placeholder="Ingrese la palabra a traducir"><br><br>
+        <button type="button" id="btn_traducir">Traducir</button><br><br>
+        <label>Traduccion:</label>
+        <input type="text" id="salida"><br><br><br><br><br><br>
+        Palabras que permite traducir:help, cat, dog, cooffe, tea, book, library, database, server, bug
+    </form>
+</body>
+
+</html>
